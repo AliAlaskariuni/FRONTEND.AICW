@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Store</title>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+    <div id="app">
+        <h1>{{ sitename }}</h1>
+
+        <button
+            v-on:click="toggleCart"
+            v-bind:disabled="numberOfItems === 0">
+            Checkout ({{ numberOfItems }})
+        </button>
+
+        <div v-if="displayCart === false" class="lesson-list">
+            <div class="lesson" v-for="lesson in lessons" v-bind:key="lesson.id">
+                <h2>{{ lesson.subject }}</h2>
+                <p>Location: {{ lesson.location }}</p>
+                <p>Price: £{{ lesson.price }}</p>
+                <p>Availability: {{ lesson.availability }}</p>
+                <button
+                    v-on:click="addToCart(lesson)"
+                    v-bind:disabled="!canAddToCart[lesson.id]">
+                    Add to Cart
+                </button>
+            </div>
+        </div>
+
+        <div v-else>
+            <h2>Checkout</h2>
+            <p>Your checkout page will appear here.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        const { createApp } = Vue
+        const lessonApp = createApp({
+            data(){
+                return{
+                    sitename: "University Lesson Store",
+                    cart: [],
+                    displayCart: false, // must be true otherwise the lessons below just wont work and wont be present
+                    lessons: [
+                        { id: 1, subject: "Mathematics", location: "Room A1", price: 25, availability: 5 },
+                        { id: 2, subject: "Computer Science", location: "Lab B2", price: 30, availability: 5 },
+                        { id: 3, subject: "English Literature", location: "Room C3", price: 20, availability: 5 },
+                        { id: 4, subject: "Physics", location: "Science Lab", price: 28, availability: 5 },
+                        { id: 5, subject: "Music", location: "Music Room", price: 22, availability: 5 },
+                        { id: 6, subject: "Art and Design", location: "Art Studio", price: 24, availability: 5 },
+                        { id: 7, subject: "Business Studies", location: "Room D4", price: 26, availability: 5 },
+                        { id: 8, subject: "Biology", location: "Science Lab", price: 27, availability: 5 },
+                        { id: 9, subject: "History", location: "Room E5", price: 18, availability: 5 },
+                        { id: 10, subject: "kittenstudy", location: "Room F20", price: 33, availability: 5 }
+                        
+                    ]
+                }
+            },
+            computed: {
+                // Count how many lesson IDs have been added to the cart.
+                numberOfItems() {
+                    return this.cart.length
+                },
+
+                // Create a true or false value for each lesson's button.
+                canAddToCart() {
+                    const lessonAvailability = {}
+
+                    this.lessons.forEach(function(lesson) {
+                        lessonAvailability[lesson.id] = lesson.availability > 0
+                    })
+
+                    return lessonAvailability
+                }
+            },
+            methods: {
+                // Switch between the lesson page and the checkout page.
+                toggleCart() {
+                    this.displayCart = !this.displayCart
+                },
+
+                // Add the lesson ID to the cart and reduce its availability.
+                addToCart(lesson) {
+                    if (lesson.availability > 0) {
+                        this.cart.push(lesson.id)
+                        lesson.availability = lesson.availability - 1
+                    }
+                }
+            }
+
+        })
+        lessonApp.mount('#app')
+    </script>
+    
+</body>
+</html>
