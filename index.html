@@ -12,21 +12,21 @@
         <h1>Welcome to the Lesson Store</h1>
         
         
+         <p></p>
     </div>
     <div id="app">
         <h1>{{ sitename }}</h1>
 
         <button
-            @click="toggleCart"
-            :disabled="numberOfItems === 0"
-        >
+            v-on:click="toggleCart"
+            v-bind:disabled="numberOfItems == 0 && !displayCart">
             Shopping Cart ({{ numberOfItems }})
         </button>
 
         <div v-if="!displayCart" class="lesson-list">
             <div
                 v-for="lesson in lessons"
-                :key="lesson.id"
+                v-bind:key="lesson.id"
                 class="lesson"
             >
                 <h2>{{ lesson.subject }}</h2>
@@ -35,37 +35,39 @@
                 <p>Availability: {{ lesson.availability }}</p>
 
                 <button
-                    @click="addToCart(lesson)"
-                    :disabled="!canAddToCart[lesson.id]"
+                    v-on:click="addToCart(lesson)"
+                    v-bind:disabled="!canAddToCart[lesson.id]"
                 >
                     Add to Cart
                 </button>
             </div>
-        </div>  
+        </div>
 
         <div v-else class="shopping-cart">
             <h2>Shopping Cart</h2>
 
-            <p v-if="cartLessons.length === 0">
+            <p v-if="cartLessons.length == 0">
                 Your shopping cart is empty.
             </p>
 
             <div
                 v-for="lesson in cartLessons"
-                :key="lesson.cartKey"
+                v-bind:key="lesson.cartKey"
                 class="cart-item"
             >
                 <h3>{{ lesson.subject }}</h3>
                 <p>Location: {{ lesson.location }}</p>
                 <p>Price: £{{ lesson.price }}</p>
 
-                <button @click="removeFromCart(lesson.id)">
+                <button v-on:click="removeFromCart(lesson.id)">
                     Remove from Cart
                 </button>
             </div>
         </div>
     </div>
 
+
+     
     <script type="module"> // in short this section defines the subjects with the diffrent information with it like price
         const { createApp } = Vue
         const lessonApp = createApp({
@@ -85,6 +87,9 @@
                         { id: 8, subject: "Biology", location: "Science Lab", price: 27, availability: 5 },
                         { id: 9, subject: "History", location: "Room E5", price: 18, availability: 5 },
                         { id: 10, subject: "Drama", location: "Theatre Room", price: 23, availability: 5 }
+                    
+                       
+                    
                     ]
                 }
             },
@@ -94,20 +99,22 @@
                 numberOfItems() {
                     return this.cart.length
                 },
-                // Return the full lesson details for each item in the cart
+
+                // Return the full lesson details for each cart item
                 cartLessons() {
                     return this.cart.map(function(lessonId, index) {
                         const lesson = this.lessons.find(function(item) {
-                            return item.id === lessonId
+                            return item.id == lessonId
                         })
 
                         return {
                             ...lesson,
                             cartKey: `${lessonId}-${index}`
                         }
-                    })
+                    }, this)
                 },
-                // Create a true or false value for each lesson's button
+
+                // Create a true or false value for each lesson's button.
                 canAddToCart() {
                     const lessonAvailability = {}
 
@@ -119,12 +126,12 @@
                 }
             },
             methods: {
-                // Switch between the lesson page and the checkout page
+                // Switch between the lesson page and the shopping cart page.
                 toggleCart() {
                     this.displayCart = !this.displayCart
                 },
 
-                // Add the lesson id to the cart and reduce its availability
+                // Add the lesson ID to the cart and reduce its availability.
                 addToCart(lesson) {
                     if (lesson.availability > 0) {
                         this.cart.push(lesson.id)
@@ -132,14 +139,14 @@
                     }
                 },
 
-                // Remove one lesson from the cart and restore its availability
+                // Remove one lesson and restore its availability
                 removeFromCart(lessonId) {
                     const cartIndex = this.cart.indexOf(lessonId)
                     const lesson = this.lessons.find(function(item) {
-                        return item.id === lessonId
+                        return item.id == lessonId
                     })
 
-                    if (cartIndex !== -1 && lesson) {
+                    if (cartIndex != -1 && lesson) {
                         this.cart.splice(cartIndex, 1)
                         lesson.availability = lesson.availability + 1
                     }
