@@ -63,6 +63,29 @@
                     Remove from Cart
                 </button>
             </div>
+
+            <div v-if="cartLessons.length > 0">
+                <h2>Checkout</h2>
+
+                <p>
+                    <label>Name:</label>
+                    <input type="text" v-model="name">
+                </p>
+
+                <p>
+                    <label>Phone:</label>
+                    <input type="text" v-model="phone">
+                </p>
+
+                <button
+                    v-on:click="checkout"
+                    v-bind:disabled="name == '' || phone == ''"
+                >
+                    Checkout
+                </button>
+
+                <p v-if="orderSubmitted">Order submitted successfully.</p>
+            </div>
         </div>
     </div>
 
@@ -76,6 +99,9 @@
                     sitename: "University Lesson Store",
                     cart: [],
                     displayCart: false, // must be true otherwise the lessons below just wont work and wont be present
+                    name: "",
+                    phone: "",
+                    orderSubmitted: false,
                     lessons: [
                         { id: 1, subject: "Mathematics", location: "Room A1", price: 25, availability: 5 },
                         { id: 2, subject: "Computer Science", location: "Lab B2", price: 30, availability: 5 },
@@ -150,6 +176,10 @@
                         this.cart.splice(cartIndex, 1)
                         lesson.availability = lesson.availability + 1
                     }
+                },
+
+                checkout() {
+                    this.orderSubmitted = true
                 }
             }
 
