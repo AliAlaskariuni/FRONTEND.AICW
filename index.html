@@ -68,18 +68,28 @@
                 <h2>Checkout</h2>
 
                 <p>
-                    <label>Name:</label>
-                    <input type="text" v-model="name">
+                    <label for="name">Name:</label>
+                    <input
+                        id="name"
+                        type="text"
+                        v-model="name"
+                        placeholder="Enter your name"
+                    >
                 </p>
 
                 <p>
-                    <label>Phone:</label>
-                    <input type="text" v-model="phone">
+                    <label for="phone">Phone:</label>
+                    <input
+                        id="phone"
+                        type="tel"
+                        v-model="phone"
+                        placeholder="Enter your phone number"
+                    >
                 </p>
 
                 <button
                     v-on:click="checkout"
-                    v-bind:disabled="name == '' || phone == ''"
+                    v-bind:disabled="!validDetails"
                 >
                     Checkout
                 </button>
@@ -149,6 +159,11 @@
                     })
 
                     return lessonAvailability
+                },
+
+                validDetails() {
+                    return /^[A-Za-z ]+$/.test(this.name) &&
+                        /^[0-9]+$/.test(this.phone)
                 }
             },
             methods: {
