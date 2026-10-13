@@ -10,16 +10,22 @@
 <body>
    <div>
         <h1>Welcome to the Lesson Store</h1>
-        <p>Here are some numbers:</p>
-<ul>
-<li v-for="num in numbers">
-{{num}}
-</li>
-</ul>
-         
     </div>
     <div id="app">
         <h1>{{ sitename }}</h1>
+
+        <div id="weather">
+            <h2>Today's Weather</h2>
+            <p><b>Temperature:</b> {{ weather.temperature }}</p>
+            <p><b>Wind:</b> {{ weather.wind }}</p>
+            <span v-text="weather.description"></span>
+            <h3>Forecast:</h3>
+            <ul>
+                <li v-for="item in weather.forecast" v-bind:key="item.day">
+                    {{ item.day }}: Temp {{ item.temperature }}, Wind {{ item.wind }}
+                </li>
+            </ul>
+        </div>
 
         <button
             v-on:click="toggleCart"
@@ -123,6 +129,13 @@
         const lessonApp = createApp({
             data(){
                 return{
+                        weather:{
+                            temperature: "",
+                            wind: "",
+                            description: "",
+                            forecast: []
+                        },
+
                     num:[2,3,5,7,9,11,13],
                     sitename: "University Lesson Store",
                     cart: [],
@@ -149,6 +162,9 @@
                     
                     ]
                 }
+            },
+            created() {
+                this.fetchData()
             },
             // inside the computed section is where the number of items in the cart is counted and also where the availability of each lesson is checked to determine if it can be added to the cart or not
             computed: {
@@ -188,6 +204,12 @@
                 }
             },
             methods: {
+                    async fetchData(){
+                    const url = "https://goweather.xyz/v2/weather/London";
+                    let response = await (fetch (url));
+                    this.weather = await response.json();
+                    
+    },
                 // Switch between the lesson page and the shopping cart page.
                 toggleCart() {
                     this.displayCart = !this.displayCart
