@@ -63,7 +63,7 @@
                     <input id="phone" type="tel" v-model="phone" placeholder="Enter your phone number">
                 </p>
 
-                <button v-on:click="checkout" v-bind:disabled="name == '' || phone == ''">
+                <button v-on:click="checkout" v-bind:disabled="!validDetails">
                     Checkout
                 </button>
 
@@ -73,7 +73,7 @@
     </div>
 
 
-
+ 
     <script type="module">
         const { createApp } = Vue
         const lessonApp = createApp({
@@ -120,8 +120,8 @@
                 },
 
                 validDetails() {
-                    return /^[A-Za-z ]+$/.test(this.name) && //checks correct validation for name, if no letters and numbers are present then wont work
-                        /^[0-9]+$/.test(this.phone)// same thing but now opposite
+                    return /^[A-Za-z]+$/.test(this.name) &&
+                        /^\d{11}$/.test(this.phone)
                 }
             },
             methods: {
