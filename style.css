@@ -1,0 +1,419 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+    --bg: #0a0916;
+    --card: #0f0e1f;
+    --card-hover: #15142a;
+    --text: #f3f0e8;
+    --text-light: #bdb8cc;
+    --text-dim: #837e99;
+    --gold: #c6a769;
+    --gold-light: #dcc594;
+    --blue: #8fc7d8;
+    --red: #c98b98;
+    --line: rgba(243, 240, 232, 0.1);
+    --serif: "Cormorant Garamond", Georgia, serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--bg);
+}
+
+body {
+    margin: 0;
+    padding-bottom: 100px;
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 500;
+}
+
+p {
+    margin: 0;
+}
+
+/* hero */
+body > div:first-child {
+    padding: 110px 20px 80px;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+}
+
+body > div:first-child h1 {
+    max-width: 14ch;
+    margin: 0 auto;
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.05;
+}
+
+body > div:first-child h1::after {
+    content: "";
+    display: block;
+    width: 50px;
+    height: 1px;
+    margin: 36px auto 0;
+    background: var(--gold);
+}
+
+/* app */
+#app {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+#app > * {
+    grid-column: 1 / -1;
+}
+
+#app > h1 {
+    grid-column: 1;
+    padding: 28px 0;
+    font-size: 1.5rem;
+}
+
+#app > button {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+/* buttons */
+button {
+    padding: 12px 24px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    background: transparent;
+    border: 1px solid rgba(198, 167, 105, 0.4);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover:not(:disabled) {
+    color: var(--bg);
+    background: var(--gold);
+    border-color: var(--gold);
+}
+
+button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* sorting */
+#app > div:not([class]) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 10px 14px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+select,
+input {
+    padding: 8px 0;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(243, 240, 232, 0.25);
+    border-radius: 0;
+}
+
+select {
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+select option {
+    background: var(--card-hover);
+}
+
+select:focus,
+input:focus {
+    outline: none;
+    border-bottom-color: var(--gold);
+}
+
+#app > p {
+    padding: 70px 0;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--text-light);
+}
+
+/* lessons */
+.lesson-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+    margin-top: 48px;
+}
+
+.lesson {
+    display: flex;
+    flex-direction: column;
+    padding: 32px 28px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    transition: 0.3s;
+}
+
+.lesson:hover {
+    background: var(--card-hover);
+    border-color: rgba(198, 167, 105, 0.35);
+    transform: translateY(-3px);
+}
+
+.lesson h2 {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    font-size: 1.9rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.lesson p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.lesson p:nth-of-type(1) {
+    margin-bottom: 6px;
+}
+
+.lesson p:nth-of-type(2) {
+    margin-bottom: 20px;
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    color: var(--gold-light);
+}
+
+.lesson p:nth-of-type(3) {
+    margin-bottom: 26px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue);
+}
+
+.lesson button {
+    margin-top: auto;
+    width: 100%;
+    padding: 14px;
+}
+
+/* fully booked */
+.lesson:has(button:disabled) {
+    background: transparent;
+}
+
+.lesson:has(button:disabled) h2,
+.lesson:has(button:disabled) p:nth-of-type(1),
+.lesson:has(button:disabled) p:nth-of-type(2) {
+    color: var(--text-dim);
+}
+
+.lesson:has(button:disabled) p:nth-of-type(3) {
+    color: var(--red);
+}
+
+/* cart */
+.shopping-cart {
+    width: 100%;
+    max-width: 720px;
+    margin: 56px auto 0;
+    padding: 50px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+}
+
+.shopping-cart h2 {
+    margin-bottom: 8px;
+    padding-bottom: 20px;
+    font-size: 2.4rem;
+    font-weight: 400;
+    font-style: italic;
+    border-bottom: 1px solid rgba(198, 167, 105, 0.4);
+}
+
+.shopping-cart > p {
+    padding: 40px 0 10px;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--text-dim);
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 24px;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.cart-item h3 {
+    grid-column: 1;
+    margin-bottom: 6px;
+    font-size: 1.5rem;
+}
+
+.cart-item p {
+    grid-column: 1;
+    font-size: 0.88rem;
+    color: var(--text-light);
+}
+
+.cart-item p:nth-of-type(2) {
+    color: var(--gold-light);
+}
+
+.cart-item button {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    padding: 6px 0;
+    color: var(--text-dim);
+    border: 0;
+    border-bottom: 1px solid rgba(243, 240, 232, 0.25);
+    border-radius: 0;
+}
+
+.cart-item button:hover:not(:disabled) {
+    color: var(--red);
+    background: transparent;
+    border-color: var(--red);
+}
+
+/* checkout */
+.shopping-cart > div:not(.cart-item) {
+    margin-top: 60px;
+}
+
+.shopping-cart > div:not(.cart-item) > p {
+    margin-top: 28px;
+}
+
+.shopping-cart label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.shopping-cart input {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1.05rem;
+}
+
+.shopping-cart input::placeholder {
+    color: var(--text-dim);
+}
+
+/* valid details = checkout enabled, so the filled fields go gold */
+.shopping-cart > div:has(> button:not(:disabled)) input:not(:placeholder-shown) {
+    border-bottom-color: var(--gold);
+}
+
+.shopping-cart > div:not(.cart-item) > button {
+    width: 100%;
+    margin-top: 40px;
+    padding: 18px;
+    color: var(--bg);
+    background: var(--gold);
+}
+
+.shopping-cart > div:not(.cart-item) > button:hover:not(:disabled) {
+    background: var(--gold-light);
+}
+
+.shopping-cart > div:not(.cart-item) > button:disabled {
+    color: var(--text-light);
+    background: transparent;
+    border-color: rgba(243, 240, 232, 0.25);
+}
+
+.shopping-cart > div:not(.cart-item) > button ~ p {
+    margin-top: 28px;
+    padding-top: 24px;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--gold-light);
+    border-top: 1px solid var(--line);
+}
+
+@media (max-width: 600px) {
+    body > div:first-child {
+        padding: 70px 20px 50px;
+    }
+
+    #app > h1 {
+        font-size: 1.15rem;
+    }
+
+    #app > button {
+        padding: 10px 12px;
+        font-size: 0.62rem;
+    }
+
+    select {
+        display: block;
+        width: 100%;
+        margin: 0 0 14px;
+    }
+
+    .shopping-cart {
+        padding: 28px 22px;
+    }
+
+    .cart-item {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-item button {
+        grid-column: 1;
+        grid-row: auto;
+        justify-self: start;
+        margin-top: 14px;
+    }
+}

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Store</title>
 
+    <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 
@@ -36,12 +37,15 @@
             </select>
         </div>
 
-        <div v-if="!displayCart" class="lesson-list">
+        <p v-if="loading && !displayCart">Loading lessons...</p>
+        <p v-else-if="errorMessage && !displayCart">{{ errorMessage }}</p>
+
+        <div v-if="!displayCart && !loading && !errorMessage" class="lesson-list">
             <div v-for="lesson in sortedLessons" v-bind:key="lesson.id" class="lesson">
                 <h2>{{ lesson.subject }}</h2>
                 <p>Location: {{ lesson.location }}</p>
                 <p>Price: £{{ lesson.price }}</p>
-                <p>Availability: {{ lesson.availability }}</p>
+                <p>Spaces left: {{ remainingSpaces[lesson.id] }}</p>
 
                 <button v-on:click="addToCart(lesson)" v-bind:disabled="!canAddToCart[lesson.id]">
                     Add to Cart
@@ -83,6 +87,7 @@
                     Checkout
                 </button>
 
+                <p v-if="errorMessage">{{ errorMessage }}</p>
                 <p v-if="orderSubmitted">Order submitted successfully.</p>
             </div>
         </div>
@@ -92,6 +97,8 @@
  
     <script type="module">
         const { createApp } = Vue
+        const API_URL = "http://localhost:3000";
+
         const lessonApp = createApp({
             data() {
                 return {
@@ -102,12 +109,14 @@
                     phone: "",
                     orderSubmitted: false,
                     lessons: [],
+                    loading: true,
+                    errorMessage: "",
                     sortBy: "subject",
                     sortOrder: "ascending"
                 }
             },
             created() {
-                this.fetchData()
+                this.fetchLessons()
             },
             computed: {
                 sortedLessons() {
@@ -144,17 +153,32 @@
 
                         return {
                             ...lesson,
+                            spacesLeft: this.remainingSpaces[lessonId],
                             cartKey: `${lessonId}-${index}`
                         }
                     }, this)
+                },
+
+                remainingSpaces() {
+                    const spaces = {}
+
+                    this.lessons.forEach(function (lesson) {
+                        const booked = this.cart.filter(function (lessonId) {
+                            return lessonId == lesson.id
+                        }).length
+
+                        spaces[lesson.id] = lesson.availability - booked
+                    }, this)
+
+                    return spaces
                 },
 
                 canAddToCart() {
                     const lessonAvailability = {}
 
                     this.lessons.forEach(function (lesson) {
-                        lessonAvailability[lesson.id] = lesson.availability > 0
-                    })
+                        lessonAvailability[lesson.id] = this.remainingSpaces[lesson.id] > 0
+                    }, this)
 
                     return lessonAvailability
                 },
@@ -165,19 +189,38 @@
                 }
             },
             methods: {
-                async fetchData() {
-                    const url = "http://localhost:3000/lessons"
-                    const response = await fetch(url)
-                    this.lessons = await response.json()
+                async fetchLessons() {
+                    this.loading = true
+                    this.errorMessage = ""
+
+                    try {
+                        const response = await fetch(`${API_URL}/lessons`)
+
+                        if (!response.ok) {
+                            throw new Error("Lessons could not be loaded")
+                        }
+
+                        const lessons = await response.json()
+
+                        if (!Array.isArray(lessons)) {
+                            throw new Error("Invalid lessons response")
+                        }
+
+                        this.lessons = lessons
+                    } catch (error) {
+                        console.error("Lesson fetch failed:", error)
+                        this.errorMessage = "Unable to load lessons. Please try again."
+                    } finally {
+                        this.loading = false
+                    }
                 },
                 toggleCart() {
                     this.displayCart = !this.displayCart
                 },
 
                 addToCart(lesson) {
-                    if (lesson.availability > 0) {
-                        this.cart.push(lesson.id)
-                        lesson.availability = lesson.availability - 1
+                    if (this.remainingSpaces[lesson.id] > 0) {
+                        this.cart.push(Number(lesson.id))
                     }
                 },
 
@@ -189,39 +232,41 @@
 
                     if (cartIndex != -1 && lesson) {
                         this.cart.splice(cartIndex, 1)
-                        lesson.availability = lesson.availability + 1
                     }
                 },
 
                 async checkout() {
-                    const order = {
-                        name: this.name,
-                        phone: this.phone,
-                        lessonIds: this.cart
-                    }
+                    this.errorMessage = ""
 
                     try {
-                        const response = await fetch("http://localhost:3000/orders", {
+                        const response = await fetch(`${API_URL}/orders`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
                             },
-                            body: JSON.stringify(order)
+                            body: JSON.stringify({
+                                name: this.name,
+                                phone: this.phone,
+                                lessonIds: this.cart.map(Number)
+                            })
                         })
 
                         if (!response.ok) {
-                            throw new Error("Order could not be submitted")
+                            const errorResponse = await response.json()
+                            throw new Error(errorResponse.error || "Order could not be submitted")
                         }
 
                         const savedOrder = await response.json()
                         console.log("Order saved:", savedOrder)
 
+                        await this.fetchLessons()
                         this.orderSubmitted = true
                         this.cart = []
                         this.name = ""
                         this.phone = ""
                     } catch (error) {
                         console.error("Checkout failed:", error)
+                        this.errorMessage = error.message
                         this.orderSubmitted = false
                     }
                 }
