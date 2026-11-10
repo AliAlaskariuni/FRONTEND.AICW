@@ -115,7 +115,12 @@
                     sortOrder: "ascending"
                 }
             },
-            created() {
+            async created() {
+                try {
+                    await fetch(`${API_URL}/lessons/reset`, { method: "POST" })
+                } catch (error) {
+                    console.error("Reset failed:", error)
+                }
                 this.fetchLessons()
             },
             computed: {
