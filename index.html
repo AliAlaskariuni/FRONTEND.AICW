@@ -97,7 +97,7 @@
 
     <script type="module">
         const { createApp } = Vue
-        const API_URL = "https://backend-aicw-m01010537.onrender.com/lessons";
+        const API_URL = "https://backend-aicw-m01010537.onrender.com";
 
         const lessonApp = createApp({
             data() {
@@ -199,7 +199,7 @@
                     this.errorMessage = ""
 
                     try {
-                        const response = await fetch(`${API_URL}`)
+                        const response = await fetch(`${API_URL}/lessons`)
 
                         if (!response.ok) {
                             throw new Error("Lessons could not be loaded")
